@@ -10,3 +10,4 @@ TODO
 * Parse the available flights graph
 * We assume that cost_roundtrip=cost_forward+cost_return. Check if it is true
 * Consider using the requests library
+* Detect page failures and differentiate between no fares available and the unavailable service 

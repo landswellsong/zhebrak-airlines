@@ -26,15 +26,23 @@ class Ryanair(Airline):
         m=re.search("FR.flightData = ({[^;]+});",resp)
         # TODO if blah blah blah not found
         flightData=json.loads(m.group(1))
+        #We should get all flights for each day not only the first one
         for entry in flightData[flightData.keys()[0]]:
-            if len(entry[1])>0:
-                yield {     "Flight":entry[1][0][2],
+            while len(entry[1][i][2]) > 0 :    
+                i=0
+                yield {     "Flight":entry[1][i][2],
                             "From":flightData.keys()[0][0:3],
                             "To":flightData.keys()[0][3:6],
-                            "Departure":datetime.strptime(entry[1][0][3][0][0]+" "+entry[1][0][3][0][1],"%Y-%m-%d %H:%M"),
-                            "Arrival":datetime.strptime(entry[1][0][3][1][0]+" "+entry[1][0][3][1][1],"%Y-%m-%d %H:%M"),
-                            "Price":entry[1][0][4]['ADT'][1]['FarePrice'],
-                            "Tax":entry[1][0][4]['ADT'][1]['Tax'] }
+                            "Departure":datetime.strptime(entry[1][i][3][0][0]+" "+entry[1][i][3][0][1],"%Y-%m-%d %H:%M"),
+                            "Arrival":datetime.strptime(entry[1][i][3][1][0]+" "+entry[1][i][3][1][1],"%Y-%m-%d %H:%M"),
+                            "Price":entry[1][i][4]['ADT'][1]['FarePrice'],
+                            "Tax":entry[1][i][4]['ADT'][1]['Tax'] }
+                i=i+1
+                #hack to break the loop, number of daily flights are unknown
+				try:
+					len(entry[1][i][2])
+				except :
+					break
 
 # Testin'
 for entry in Ryanair().getFlights("DTM","OPO",date(2014, 3, 24)):
